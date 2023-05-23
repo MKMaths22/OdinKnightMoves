@@ -10,21 +10,22 @@ class Knight
     # find_poss_squares accepts a 2-D array as input and outputs a 2-D array of coordinates of accessible squares using a single knight move
     def find_poss_squares(array)
         output = []
-        puts "output = #{output}"
         KNIGHT_VECTORS.each { |vector| output.push([vector[0] + array[0], vector[1] + array[1]]) }
-        puts "output = #{output}"
         output.select { |coords| coords[0].between?(0, 7) && coords[1].between?(0, 7) }
     end
 end
 
 class Square
   
+  @@squares = []
+
   attr_reader :coordinates
   attr_accessor :neighbours
 
   def initialize(coordinates)
     @coordinates = coordinates
     @neighbours = []
+    @@squares.push(self)
   end
 
   def find_neighbours(board, knight)
@@ -33,6 +34,10 @@ class Square
         @neighbours.push(board[item[0]][item[1]])
         # the Square object now references its neighbours directly
     end
+  end
+
+  def self.find_all_neighbours(board, knight)
+    @@squares.each { |square| square.find_neighbours(board, knight) }
   end
 end
 
@@ -49,5 +54,4 @@ end
 
 board = make_board
 knight = Knight.new
-# board.dig(0,0).find_neighbours(board, knight)
-p knight.find_poss_squares([3,4])
+Square.find_all_neighbours(board, knight)
