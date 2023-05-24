@@ -57,12 +57,10 @@ def make_board
   board
 end
 
-board = make_board
-knight = Knight.new
-Square.find_all_neighbours(board, knight)
-
-def knight_moves(start, finish, board)
+def knight_moves(start, finish, board = make_board, knight = Knight.new)
+  Square.find_all_neighbours(board, knight)
   # start and finish are coordinate arrays
+  
   first_square = board[start[0]][start[1]]
   final_square = board[finish[0]][finish[1]]
   first_square.distance = 0
@@ -98,10 +96,11 @@ def construct_route(first_square, final_square)
     current_target = current_target.neighbours.find { |neighbour| neighbour.distance == current_distance }
     route.unshift(current_target.coordinates)
   end
+  route.unshift(first_square.coordinates)
   p route
   Square.reset_all_distances
 end
 
-knight_moves([0,0],[3,3], board)
+knight_moves([0,0],[3,3])
 
 
