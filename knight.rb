@@ -65,6 +65,18 @@ INPUT_ERROR = 'Input not accepted. We require knight_moves([w, x], [y, z]) where
 Square.find_all_neighbours(BOARD, KNIGHT)
 # if we call knight_moves many times, the board is set up already, so only happens once
 
+def generate_neighbours_and_distances(squares_array, target_square, completed = false)
+  return if completed
+  current_square = squares_array.shift
+  squares_to_add = current_square.neighbours.select { |neighbour| !neighbour.distance }
+  squares_to_add.each do |square|
+      square.distance = current_square.distance + 1
+      squares_array.push(square)
+      return if square == target_square
+    end
+    generate_neighbours_and_distances(squares_array, target_square, completed)
+end
+
 def knight_moves(start, finish)
   first_square = BOARD.dig(start[0], start[1])
   final_square = BOARD.dig(finish[0], finish[1])
@@ -74,27 +86,9 @@ def knight_moves(start, finish)
   end
   
   first_square.distance = 0
-  found_squares = [first_square]
-  finish_found = false
-  finish_found = true if first_square == final_square
-    until finish_found do
-      current_square = found_squares.shift
-      current_distance = current_square.distance
-      # current_distance is definitely not nil and is distance from first_square
-      current_square.neighbours.each do |neighbour|
-        unless neighbour.distance
-          neighbour.distance = current_distance + 1
-          found_squares.push(neighbour)
-          if neighbour == final_square
-            finish_found = true
-            break
-          end
-        end
-        break if finish_found
-      end
-    end 
-    output_route(construct_route(first_square, final_square))
-    Square.reset_all_distances
+  generate_neighbours_and_distances([first_square], final_square) unless first_square == final_square
+  output_route(construct_route(first_square, final_square))
+  Square.reset_all_distances
 end
 
 def step_or_steps(number)
@@ -114,6 +108,7 @@ def construct_route(first_square, final_square)
     route.unshift(current_target.coordinates)
   end
   route.unshift(first_square.coordinates)
+  route.uniq!
   route
 end
   
@@ -123,5 +118,5 @@ def output_route(route)
   route.each { |point| puts "\[#{point[0]},#{point[1]}\]" }
 end
 
-knight_moves([0,0], [1,1])
+knight_moves([7,1], [0,0])
 
