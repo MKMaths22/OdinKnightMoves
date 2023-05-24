@@ -63,9 +63,31 @@ Square.find_all_neighbours(board, knight)
 
 def knight_moves(start, finish)
   # start and finish are coordinate arrays
-  counter = 0
-  found_squares = [board[start[0]][start[1]]]
+  first_square = board[start[0]][start[1]]
+  final_square = board[finish[0]][finish[1]]
+  first_square.distance = 0
+  found_squares = [first_square]
+  finish_found = false
+    until finish_found do
+      current_square = found_squares.shift
+      current_distance = current_square.distance
+      # current_distance is definitely not nil and is distance from first_square
+      current_square.neighbours.each do |square|
+        unless square.distance
+          square.distance = current_distance + 1
+          found_squares.push(square)
+          if square.coordinates == finish
+            finish_found = true
+            break
+          end
+        end
+        break if finish_found
+      end
+    end 
+    construct_route(first_square, final_square)
+end
+
+
 
 
   # at end of program run Square.reset_all_distances
-end
