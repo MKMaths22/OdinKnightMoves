@@ -61,6 +61,7 @@ end
 
 BOARD = make_board
 KNIGHT = Knight.new
+INPUT_ERROR = 'Input not accepted. We require knight_moves([w, x], [y, z]) where w,x,y and z are whole numbers between 0 and 7.'
 Square.find_all_neighbours(BOARD, KNIGHT)
 # if we call knight_moves many times, the board is set up already, so only happens once
 
@@ -68,9 +69,10 @@ def knight_moves(start, finish)
   first_square = BOARD.dig(start[0], start[1])
   final_square = BOARD.dig(finish[0], finish[1])
   unless first_square && final_square
-    puts 'Input not accepted. We require knight_moves([w, x], [y, z]) where w,x,y and z are whole numbers between 0 and 7.'
+    puts INPUT_ERROR
     return
   end
+  
   first_square.distance = 0
   found_squares = [first_square]
   finish_found = false
