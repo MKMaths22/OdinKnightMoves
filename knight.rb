@@ -83,7 +83,7 @@ def knight_moves(start, finish)
         unless neighbour.distance
           neighbour.distance = current_distance + 1
           found_squares.push(neighbour)
-          if neighbour.coordinates == finish
+          if neighbour == final_square
             finish_found = true
             break
           end
@@ -91,7 +91,8 @@ def knight_moves(start, finish)
         break if finish_found
       end
     end 
-    construct_route(first_square, final_square)
+    output_route(construct_route(first_square, final_square))
+    Square.reset_all_distances
 end
 
 def step_or_steps(number)
@@ -104,17 +105,20 @@ def construct_route(first_square, final_square)
   current_distance = final_square.distance
   current_target = final_square
   route = [final_square.coordinates]
-  puts "We have found a route using #{step_or_steps(current_distance)}"
-  # sort out plural for steps later
   while current_distance > 1
     current_distance -= 1
     current_target = current_target.neighbours.find { |neighbour| neighbour.distance == current_distance }
+    # current_target is one step closer to first_square and a neighbour of previous target, so is definitely on a shortest possible route
     route.unshift(current_target.coordinates)
   end
   route.unshift(first_square.coordinates)
+  route
+end
+  
+def output_route(route) 
+  puts "We have found a route using #{step_or_steps(route.size - 1)}"
   puts "Here's your path:"
   route.each { |point| puts "\[#{point[0]},#{point[1]}\]" }
-  Square.reset_all_distances
 end
 
 knight_moves([0,0], [1,1])
