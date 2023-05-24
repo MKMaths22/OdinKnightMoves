@@ -57,13 +57,17 @@ def make_board
   board
 end
 
-CHESS_BOARD = make_board
-NEW_KNIGHT = Knight.new
-Square.find_all_neighbours(CHESS_BOARD, NEW_KNIGHT)
+BOARD = make_board
+KNIGHT = Knight.new
+Square.find_all_neighbours(BOARD, KNIGHT)
 
-def knight_moves(start, finish, board = CHESS_BOARD, knight = NEW_KNIGHT)
-  first_square = board[start[0]][start[1]]
-  final_square = board[finish[0]][finish[1]]
+def knight_moves(start, finish)
+  first_square = BOARD.dig(start[0], start[1])
+  final_square = BOARD.dig(finish[0], finish[1])
+  unless first_square && final_square
+    puts 'Input not accepted. We require knight_moves([w, x], [y, z]) where w,x,y and z are whole numbers between 0 and 7.'
+    return
+  end
   first_square.distance = 0
   found_squares = [first_square]
   finish_found = false
@@ -102,8 +106,5 @@ def construct_route(first_square, final_square)
   Square.reset_all_distances
 end
 
-knight_moves([0,0],[7,7])
-knight_moves([7,7],[0,0])
-knight_moves([3,3],[4,3])
-
+knight_moves([0,2], [8, 8])
 
