@@ -57,10 +57,11 @@ def make_board
   board
 end
 
-def knight_moves(start, finish, board = make_board, knight = Knight.new)
-  Square.find_all_neighbours(board, knight)
-  # start and finish are coordinate arrays
-  
+CHESS_BOARD = make_board
+NEW_KNIGHT = Knight.new
+Square.find_all_neighbours(CHESS_BOARD, NEW_KNIGHT)
+
+def knight_moves(start, finish, board = CHESS_BOARD, knight = NEW_KNIGHT)
   first_square = board[start[0]][start[1]]
   final_square = board[finish[0]][finish[1]]
   first_square.distance = 0
@@ -101,6 +102,8 @@ def construct_route(first_square, final_square)
   Square.reset_all_distances
 end
 
-knight_moves([0,0],[3,3])
+knight_moves([0,0],[7,7])
+knight_moves([7,7],[0,0])
+knight_moves([3,3],[4,3])
 
 
