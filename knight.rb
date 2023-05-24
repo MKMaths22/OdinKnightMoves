@@ -20,11 +20,12 @@ class Square
   @@squares = []
 
   attr_reader :coordinates
-  attr_accessor :neighbours
+  attr_accessor :neighbours, :distance
 
   def initialize(coordinates)
     @coordinates = coordinates
     @neighbours = []
+    @distance = nil
     @@squares.push(self)
   end
 
@@ -38,6 +39,10 @@ class Square
 
   def self.find_all_neighbours(board, knight)
     @@squares.each { |square| square.find_neighbours(board, knight) }
+  end
+
+  def self.reset_all_distances
+    @@squares.each { |square| square.distance = nil }
   end
 end
 
@@ -55,3 +60,12 @@ end
 board = make_board
 knight = Knight.new
 Square.find_all_neighbours(board, knight)
+
+def knight_moves(start, finish)
+  # start and finish are coordinate arrays
+  counter = 0
+  found_squares = [board[start[0]][start[1]]]
+
+
+  # at end of program run Square.reset_all_distances
+end
