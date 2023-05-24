@@ -61,7 +61,7 @@ board = make_board
 knight = Knight.new
 Square.find_all_neighbours(board, knight)
 
-def knight_moves(start, finish)
+def knight_moves(start, finish, board)
   # start and finish are coordinate arrays
   first_square = board[start[0]][start[1]]
   final_square = board[finish[0]][finish[1]]
@@ -72,11 +72,11 @@ def knight_moves(start, finish)
       current_square = found_squares.shift
       current_distance = current_square.distance
       # current_distance is definitely not nil and is distance from first_square
-      current_square.neighbours.each do |square|
-        unless square.distance
-          square.distance = current_distance + 1
-          found_squares.push(square)
-          if square.coordinates == finish
+      current_square.neighbours.each do |neighbour|
+        unless neighbour.distance
+          neighbour.distance = current_distance + 1
+          found_squares.push(neighbour)
+          if neighbour.coordinates == finish
             finish_found = true
             break
           end
@@ -87,7 +87,21 @@ def knight_moves(start, finish)
     construct_route(first_square, final_square)
 end
 
+def construct_route(first_square, final_square)
+  current_distance = final_square.distance
+  current_target = final_square
+  route = [final_square.coordinates]
+  puts "We have found a route using #{current_distance} steps"
+  # sort out plural for steps later
+  while current_distance > 1
+    current_distance -= 1
+    current_target = current_target.neighbours.find { |neighbour| neighbour.distance == current_distance }
+    route.unshift(current_target.coordinates)
+  end
+  p route
+  Square.reset_all_distances
+end
+
+knight_moves([0,0],[3,3], board)
 
 
-
-  # at end of program run Square.reset_all_distances
