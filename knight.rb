@@ -118,9 +118,23 @@ def output_route(route, all_routes = false)
   route.each { |point| puts "\[#{point[0]},#{point[1]}\]" }
 end
 
-def find_all_routes(first_square, final_square)
-  puts "You chose to find all routes"
+def complete_route(first_square, route, current_distance)
+    if current_distance > 1
+      neighbours_to_use = route[0].neighbours.select { |neighbour| neighbour.distance == current_distance - 1}
+      neighbours_to_use.each { |neighbour| complete_route(first_square, [neighbour].concat(route), current_distance - 1)}
+    end
+    if current_distance == 1
+      p [first_square.coordinates].concat(route.map { |square| square.coordinates })
+    end
 end
 
-knight_moves([7,1], [0,0])
+
+def find_all_routes(first_square, final_square, current_distance = final_square.distance)
+  return [[first_square.coordinates]] if final_square == first_square
+
+  # route is partially completed, ends with final square. We extend it from the start
+  complete_route(first_square, [final_square], current_distance)
+end
+
+knight_moves([0,0], [3,7], true)
 
