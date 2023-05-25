@@ -4,13 +4,29 @@
 
 # Knight class details how the knight moves. If this is changed in future versions based on other pieces, that will is fine UNLESS the piece cannot access the entire board. In that case, extra methods would be necessary to detect this and prevent infinite loops.
 class Knight
-    KNIGHT_VECTORS = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]]
+    def initialize
+      @all_routes = []
+      @vectors = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]]
+    end
+    
     # find_poss_squares accepts a 2-D array as input and outputs a 2-D array of coordinates of accessible squares using a single knight move
     def find_poss_squares(array)
         output = []
-        KNIGHT_VECTORS.each { |vector| output.push([vector[0] + array[0], vector[1] + array[1]]) }
+        @vectors.each { |vector| output.push([vector[0] + array[0], vector[1] + array[1]]) }
         # output includes all squares reachable on an infinite board. Now filter for the allowable ranges of row and column on actualy finite board.
         output.select { |coords| coords[0].between?(0, 7) && coords[1].between?(0, 7) }
+    end
+
+    def reset_routes
+        @all_routes = []
+    end
+
+    def add_route(route)
+        @all_routes.push(route)
+    end
+
+    def output_routes
+        @all_routes
     end
 end
 
@@ -89,6 +105,7 @@ def knight_moves(start, finish, all_routes = false)
   generate_neighbours_and_distances([first_square], final_square) unless first_square == final_square
   all_routes ? find_all_routes(first_square, final_square) : find_one_route(first_square, final_square)
   Square.reset_all_distances
+  KNIGHT.reset_routes
 end
 
 def step_or_steps(number)
@@ -121,10 +138,10 @@ end
 def complete_route(first_square, route, current_distance)
     if current_distance > 1
       neighbours_to_use = route[0].neighbours.select { |neighbour| neighbour.distance == current_distance - 1}
-      neighbours_to_use.each { |neighbour| complete_route(first_square, [neighbour].concat(route), current_distance - 1)}
+      neighbours_to_use.each { |neighbour| complete_route(first_square, [neighbour].concat(route), current_distance - 1) }
     end
     if current_distance == 1
-      p [first_square.coordinates].concat(route.map { |square| square.coordinates })
+       KNIGHT.add_route([first_square.coordinates].concat(route.map { |square| square.coordinates }))
     end
 end
 
@@ -134,7 +151,10 @@ def find_all_routes(first_square, final_square, current_distance = final_square.
 
   # route is partially completed, ends with final square. We extend it from the start
   complete_route(first_square, [final_square], current_distance)
+  KNIGHT.output_routes.each { |route| p route }
+  KNIGHT.reset_routes
 end
 
-knight_moves([0,0], [3,7], true)
+knight_moves([0,0], [6,6], true)
+
 
