@@ -10,6 +10,7 @@
 # based on other pieces, that will be fine UNLESS the piece cannot access the entire
 # board. In that case, extra methods would be necessary to detect this and prevent
 # infinite loops.
+#This class also keeps record of all the routes found, to avoid using global variable
 class Knight
   def initialize
     @all_routes = []
@@ -131,15 +132,22 @@ INPUT_ERROR = 'Input not accepted. We require knight_moves([w, x], [y, z]) where
 Square.find_all_neighbours(BOARD, KNIGHT)
 # if we call knight_moves many times, the board is set up already, so only happens once
 
-def generate_neighbours_and_distances(squares_array, target_square)
-  current_square = squares_array.shift
+def generate_neighbours_and_distances(squares_queue, final_square)
+  # squares_queue for BFS keeps track of the neighbours of previous squares we have
+  # discovered and given distance values (distance from the first square)
+  current_square = squares_queue.shift
   squares_to_add = current_square.neighbours.reject(&:distance)
+  # if neighbour squares already had a distance set, we do not change it. For squares
+  # we haven't found before, we set their distance value
   squares_to_add.each do |square|
     square.distance = current_square.distance + 1
-    squares_array.push(square)
-    return if square == target_square
+    squares_queue.push(square)
+    return if square == final_square
+    # we stop when the target square has been found and given a distance value
   end
-  generate_neighbours_and_distances(squares_array, target_square)
+  # recursively continues with altered squares_queue, due to how knight moves
+  # the final_square will definitely be found, ensuring termination of program
+  generate_neighbours_and_distances(squares_queue, final_square)
 end
 
 def knight_moves(start, finish)
