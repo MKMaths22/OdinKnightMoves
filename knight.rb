@@ -10,7 +10,7 @@
 # based on other pieces, that will be fine UNLESS the piece cannot access the entire
 # board. In that case, extra methods would be necessary to detect this and prevent
 # infinite loops.
-#This class also keeps record of all the routes found, to avoid using global variable
+# This class also keeps record of all the routes found, to avoid using global variable
 class Knight
   def initialize
     @all_routes = []
@@ -37,12 +37,12 @@ class Knight
   end
 
   def step_or_steps(number)
-    case number 
-    when 0 
+    case number
+    when 0
       'no steps at all!'
-    when 1 
+    when 1
       'just 1 step.'
-    else 
+    else
       "#{number} steps."
     end
   end
@@ -52,7 +52,7 @@ class Knight
     when 1
       'one other optimal path. Would you like to see it?'
     else
-    "#{number} other optimal paths. Would you like to see them?"
+      "#{number} other optimal paths. Would you like to see them?"
     end
   end
 
@@ -94,7 +94,7 @@ class Square
     @coordinates = coordinates
     @neighbours = []
     @distance = nil
-    # refers to distance in knight moves from first_square. We use BFS to explore the 
+    # refers to distance in knight moves from first_square. We use BFS to explore the
     # network of squares, undiscovered squares have nil value.
     @@squares.push(self)
   end
@@ -176,7 +176,7 @@ def complete_route(first_square, route, remaining_squares)
     neighbours_to_use.each do |neighbour|
       complete_route(first_square, [neighbour].concat(route), remaining_squares - 1)
     end
-    # route[0] is earliest part of route found so far. We can continue the route 
+    # route[0] is earliest part of route found so far. We can continue the route
     # backwards using any neighbours of that square which are one knight_move closer # to the first_square, so we split the calculation to cover all such neighbours.
     return
   end
