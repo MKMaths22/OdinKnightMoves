@@ -16,8 +16,8 @@ class Knight
     @vectors = [[1, 2], [1, -2], [-1, 2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]]
   end
 
-  # find_poss_squares accepts a 2-D array as input and outputs a 2-D array of
-  # coordinates of accessible squares using a single knight move
+  # find_poss_squares accepts a 2-D co-ordinate array as input and outputs a 2-D array
+  # of coordinates of accessible squares using a single knight move
 
   def find_poss_squares(array)
     output = []
@@ -36,17 +36,23 @@ class Knight
   end
 
   def step_or_steps(number)
-    return 'no steps at all!' if number.zero?
-
-    return 'just 1 step.' if number == 1
-
-    "#{number} steps."
+    case number 
+    when 0 
+      'no steps at all!'
+    when 1 
+      'just 1 step.'
+    else 
+      "#{number} steps."
+    end
   end
 
   def path_or_paths(number)
-    return 'one other optimal path. Would you like to see it?' if number == 1
-
+    case number
+    when 1
+      'one other optimal path. Would you like to see it?'
+    else
     "#{number} other optimal paths. Would you like to see them?"
+    end
   end
 
   # output_one_route outputs route as in  the project instructions, as a column.
@@ -171,4 +177,4 @@ def find_all_routes(first_square, final_square, current_distance = final_square.
   complete_route(first_square, [final_square], current_distance)
 end
 
-knight_moves([3, 3], [3, 3])
+knight_moves([0, 3], [3, 5])
