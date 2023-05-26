@@ -94,6 +94,8 @@ class Square
     @coordinates = coordinates
     @neighbours = []
     @distance = nil
+    # refers to distance in knight moves from first_square. We use BFS to explore the 
+    # network of squares, undiscovered squares have nil value.
     @@squares.push(self)
   end
 
@@ -158,31 +160,39 @@ def knight_moves(start, finish)
   first_square.distance = 0
   generate_neighbours_and_distances([first_square], final_square) unless first_square == final_square
   find_all_routes(first_square, final_square)
-  Square.reset_all_distances
+  # find_all_routes deals with case of identical first_square, final_square
   KNIGHT.output_routes
   KNIGHT.reset_routes
+  Square.reset_all_distances
+  # in case of multiple calls to knight_moves, we tidy up routes/distances
 end
 
-def complete_route(first_square, route, current_distance)
-  if current_distance > 1
-    neighbours_to_use = route[0].neighbours.select { |neighbour| neighbour.distance == current_distance - 1 }
+def complete_route(first_square, route, remaining_squares)
+  # route has been partly completed backwards from the final_square. With
+  # remaining_squares counting how many need to be added, the next square we add
+  # will have distance = remaining_squares - 1.
+  if remaining_squares > 1
+    neighbours_to_use = route[0].neighbours.select { |neighbour| neighbour.distance == remaining_squares - 1 }
     neighbours_to_use.each do |neighbour|
-      complete_route(first_square, [neighbour].concat(route), current_distance - 1)
+      complete_route(first_square, [neighbour].concat(route), remaining_squares - 1)
     end
+    # route[0] is earliest part of route found so far. We can continue the route 
+    # backwards using any neighbours of that square which are one knight_move closer # to the first_square, so we split the calculation to cover all such neighbours.
     return
   end
-  # otherwise, current_distance = 1, so only first_square remains to add to route
+  # otherwise, remaining_squares == 1, so only first_square remains to add to route
   KNIGHT.add_route([first_square.coordinates].concat(route.map(&:coordinates)))
 end
 
-def find_all_routes(first_square, final_square, current_distance = final_square.distance)
+def find_all_routes(first_square, final_square, remaining_squares = final_square.distance)
   if final_square == first_square
     KNIGHT.add_route([first_square.coordinates])
     return
+    # in this case only route is trivial
   end
 
-  # route is partially completed, ends with final square. We extend it from the start
-  complete_route(first_square, [final_square], current_distance)
+  # route is initialized as [final_square] and will be extended backwards
+  complete_route(first_square, [final_square], remaining_squares)
 end
 
-knight_moves([0, 3], [3, 5])
+knight_moves([0, 3], [1, 5])
