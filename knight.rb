@@ -196,3 +196,10 @@ def find_all_routes(first_square, final_square, remaining_squares = final_square
 end
 
 knight_moves([0, 3], [1, 5])
+# there is 1 route of 1 step from [0, 3] to [1, 5]
+knight_moves([0, 0], [0, 0])
+# there is 1 route of no steps from [0, 0] to [0, 0]
+knight_moves([0, 0], [7, 7])
+# there are 108 routes of 6 steps from [0, 0] to [7, 7]
+knight_moves([4, 4], [5, 4])
+# there are 12 routes of 3 steps from [4, 4] to [5, 4]
