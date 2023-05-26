@@ -25,8 +25,37 @@ class Knight
         @all_routes.push(route)
     end
 
+    def step_or_steps(number)
+        return "no steps at all!" if number.zero?
+        return "just 1 step." if number == 1
+         "#{number} steps."
+    end
+
+    def path_or_paths(number)
+      return 'one other optimal path. Would you like to see it?' if number == 1
+      "#{number} other optimal paths. Would you like to see them?"
+    end
+    
+    def output_one_route(route)
+        puts "We have found a route using #{KNIGHT.step_or_steps(route.size - 1)}"
+        puts "Here's your path:"
+        route.each { |point| puts "\[#{point[0]},#{point[1]}\]" }
+    end
+    
     def output_routes
-        @all_routes
+      steps = @all_routes[0].size
+      output_one_route(@all_routes.shift)
+      how_many_other = @all_routes.size
+      return puts "This is the unique shortest possible path." if how_many_other.zero?
+      puts "I have also found #{path_or_paths(how_many_other)}"
+      puts 'Press any key for the remaining output.'
+      @all_routes.each { |route| puts as_string(route) } if gets 
+    end
+
+    def as_string(route)
+      output = ''
+      route.each { |point| output += "\[#{point[0]},#{point[1]}\], " }
+      output[0..-3]
     end
 end
 
@@ -93,7 +122,7 @@ def generate_neighbours_and_distances(squares_array, target_square, completed = 
     generate_neighbours_and_distances(squares_array, target_square, completed)
 end
 
-def knight_moves(start, finish, all_routes = false)
+def knight_moves(start, finish)
   first_square = BOARD.dig(start[0], start[1])
   final_square = BOARD.dig(finish[0], finish[1])
   unless first_square && final_square
@@ -103,38 +132,12 @@ def knight_moves(start, finish, all_routes = false)
   
   first_square.distance = 0
   generate_neighbours_and_distances([first_square], final_square) unless first_square == final_square
-  all_routes ? find_all_routes(first_square, final_square) : find_one_route(first_square, final_square)
+  find_all_routes(first_square, final_square)
   Square.reset_all_distances
+  KNIGHT.output_routes
   KNIGHT.reset_routes
 end
-
-def step_or_steps(number)
-  return "no steps at all!" if number.zero?
-  return "just 1 step." if number == 1
-   "#{number} steps."
-end
-
-def find_one_route(first_square, final_square)
-  current_distance = final_square.distance
-  current_target = final_square
-  route = [final_square.coordinates]
-  while current_distance > 1
-    current_distance -= 1
-    current_target = current_target.neighbours.find { |neighbour| neighbour.distance == current_distance }
-    # current_target is one step closer to first_square and a neighbour of previous target, so is definitely on a shortest possible route
-    route.unshift(current_target.coordinates)
-  end
-  route.unshift(first_square.coordinates)
-  route.uniq!
-  output_route(route)
-end
   
-def output_route(route, all_routes = false) 
-  puts "We have found a route using #{step_or_steps(route.size - 1)}"
-  puts "Here's your path:"
-  route.each { |point| puts "\[#{point[0]},#{point[1]}\]" }
-end
-
 def complete_route(first_square, route, current_distance)
     if current_distance > 1
       neighbours_to_use = route[0].neighbours.select { |neighbour| neighbour.distance == current_distance - 1}
@@ -147,14 +150,14 @@ end
 
 
 def find_all_routes(first_square, final_square, current_distance = final_square.distance)
-  return [[first_square.coordinates]] if final_square == first_square
+  if final_square == first_square
+    KNIGHT.add_route([first_square.coordinates])
+    return
+  end
 
   # route is partially completed, ends with final square. We extend it from the start
   complete_route(first_square, [final_square], current_distance)
-  KNIGHT.output_routes.each { |route| p route }
-  KNIGHT.reset_routes
 end
 
-knight_moves([0,0], [6,6], true)
-
+knight_moves([0,0], [7,7])
 
