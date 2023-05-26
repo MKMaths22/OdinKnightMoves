@@ -5,7 +5,8 @@ This project uses the MIT License.
 
 --------------------------------------------
 
-Project instructions:  
+Project instructions: 
+-------------------------------------------- 
 
 For this project, you’ll need to use a data structure that’s similar (but not identical) to a binary tree.  
 
@@ -30,6 +31,7 @@ knight_moves([3,3],[0,0]) == [[3,3],[1,2],[0,0]]
 -------------------------------------------
 
 Author comments by Peter Hawes:
+------------------------------------------
 
 I decided in the end to combine following the instructions with an extra feature. The user is informed that other shortest possible routes have been found and is shown these routes upon entering any input. That way, the extra routes can be shown without breaking the spirit of the project instructions, or having extra arguments to input. A redundant #find_one_route method is included in redundant.rb, to show how we can just calculate one optimal knight route.
 
