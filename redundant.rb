@@ -11,4 +11,4 @@ def find_one_route(first_square, final_square)
     route.unshift(first_square.coordinates)
     route.uniq!
     output_route(route)
-  end
+end

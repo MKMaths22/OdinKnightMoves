@@ -2,7 +2,7 @@
 
 # The 2-D constant array BOARD keeps the Square instances 'squares' in place while the connections between them are constructed using the Knight class's find_poss_squares method. However, once the starting and finishing square objects are found, the knight_moves method then uses the instance variables of the squares only to do the calculations, without referring back to the BOARD at all.
 
-# Knight class details how the knight moves. If this is changed in future versions based on other pieces, that will is fine UNLESS the piece cannot access the entire board. In that case, extra methods would be necessary to detect this and prevent infinite loops.
+# Knight class details how the knight moves. If this is changed in future versions based on other pieces, that will be fine UNLESS the piece cannot access the entire board. In that case, extra methods would be necessary to detect this and prevent infinite loops.
 class Knight
     def initialize
       @all_routes = []
@@ -36,6 +36,7 @@ class Knight
       "#{number} other optimal paths. Would you like to see them?"
     end
     
+    # output_one_route outputs route as in  the project instructions, as a column.
     def output_one_route(route)
         puts "We have found a route using #{KNIGHT.step_or_steps(route.size - 1)}"
         puts "Here's your path:"
@@ -52,6 +53,7 @@ class Knight
       @all_routes.each { |route| puts as_string(route) } if gets 
     end
 
+    # the remaining routes are displayed as rows
     def as_string(route)
       output = ''
       route.each { |point| output += "\[#{point[0]},#{point[1]}\], " }
@@ -106,12 +108,12 @@ end
 
 BOARD = make_board
 KNIGHT = Knight.new
-INPUT_ERROR = 'Input not accepted. We require knight_moves([w, x], [y, z]) where w,x,y and z are whole numbers between 0 and 7.'
+INPUT_ERROR = 'Input not accepted. We require knight_moves([w, x], [y, z]) where w,x,y and z are numbers between 0 and 7.'
 Square.find_all_neighbours(BOARD, KNIGHT)
 # if we call knight_moves many times, the board is set up already, so only happens once
 
-def generate_neighbours_and_distances(squares_array, target_square, completed = false)
-  return if completed
+def generate_neighbours_and_distances(squares_array, target_square)
+  
   current_square = squares_array.shift
   squares_to_add = current_square.neighbours.select { |neighbour| !neighbour.distance }
   squares_to_add.each do |square|
@@ -119,7 +121,7 @@ def generate_neighbours_and_distances(squares_array, target_square, completed = 
       squares_array.push(square)
       return if square == target_square
     end
-    generate_neighbours_and_distances(squares_array, target_square, completed)
+    generate_neighbours_and_distances(squares_array, target_square)
 end
 
 def knight_moves(start, finish)
@@ -159,5 +161,5 @@ def find_all_routes(first_square, final_square, current_distance = final_square.
   complete_route(first_square, [final_square], current_distance)
 end
 
-knight_moves([0,0], [7,7])
+knight_moves([3,3], [3,3])
 
